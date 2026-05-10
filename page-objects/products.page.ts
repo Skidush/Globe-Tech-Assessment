@@ -4,6 +4,11 @@ import { ProductBlock } from "../component-objects/product-block.component";
 import { FlowError } from "../errors/flow.error";
 import { ProductDetailsPage } from "./product-details.page";
 
+/**
+ * Page object representing the product listing page.
+ *
+ * Provides methods to load product cards, select by name, and choose a random item.
+ */
 export class ProductsPage extends BaseSpreePage {
     readonly url: string = `${this.baseUrl}/products`;
 
@@ -13,6 +18,11 @@ export class ProductsPage extends BaseSpreePage {
         super(page);
     }
 
+    /**
+     * Read all visible product cards from the product listing page and cache them.
+     *
+     * Returns the cached value when the products were already loaded.
+     */
     async getProducts(): Promise<ProductBlock[]> {
         if (this.products.length > 0) {
             return this.products;
@@ -29,6 +39,12 @@ export class ProductsPage extends BaseSpreePage {
         return this.products;
     }
 
+    /**
+     * Scroll enough times until the catalog indicates no additional products remain.
+     *
+     * Uses a sentinel loop to avoid infinite scrolling if the page never loads the
+     * completion indicator.
+     */
     async loadAllProducts(): Promise<ProductsPage> {
         const loopSentinel = 20;
 
@@ -54,6 +70,11 @@ export class ProductsPage extends BaseSpreePage {
         return this;
     }
 
+    /**
+     * Open a specific product by name after verifying it exists in the loaded product list.
+     *
+     * Throws a FlowError if the product cannot be found.
+     */
     async openProductByName(productName: string): Promise<ProductDetailsPage> {
         const product = (await this.getProducts()).find(product => product.name === productName);
         if (!product) {
@@ -65,6 +86,9 @@ export class ProductsPage extends BaseSpreePage {
         return new ProductDetailsPage(this.page, productName);
     }
 
+    /**
+     * Select and open a random product from the currently loaded product list.
+     */
     async openRandomProduct(): Promise<ProductDetailsPage> {
         const products = await this.getProducts();
         const randomIndex = Math.floor(Math.random() * products.length);

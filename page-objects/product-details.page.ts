@@ -3,6 +3,11 @@ import { BaseSpreePage } from "./base-spree.page";
 import { DataUtil } from "../utils/data.utils";
 import { ProductDetails } from "../data/models/product-details.model";
 
+/**
+ * Page object for a specific product details page.
+ *
+ * Allows reading product metadata and manipulating quantity/add-to-cart controls.
+ */
 export class ProductDetailsPage extends BaseSpreePage {
     readonly url: string;
     readonly productDetailsContainer: Locator;
@@ -23,6 +28,9 @@ export class ProductDetailsPage extends BaseSpreePage {
         return price!.toString();
     }
 
+    /**
+     * Read the visible product metadata including the formatted price and numeric price.
+     */
     async getProductDetails(): Promise<ProductDetails> {
         const name = await this.getProductName();
         const price = await this.getProductPrice();
@@ -31,6 +39,9 @@ export class ProductDetailsPage extends BaseSpreePage {
         return { name: name, price: price, priceNumeric: priceNumeric }
     }
 
+    /**
+     * Increase the quantity selector by the provided number of clicks.
+     */
     async addQuantity(quantity: number): Promise<number> {
         const increaseQuantityButton = this.productDetailsContainer.locator('button[aria-label="Increase quantity"]');
         await increaseQuantityButton.click({ clickCount: quantity });
@@ -39,6 +50,9 @@ export class ProductDetailsPage extends BaseSpreePage {
         return parseInt(quantityValue!);
     }
 
+    /**
+     * Add the currently displayed product to the cart and wait for the cart popup.
+     */
     async addToCart(): Promise<ProductDetailsPage> {
         await this.productDetailsContainer.locator('button:has-text("Add to Cart")').click();
         await this.cart.waitToOpen();

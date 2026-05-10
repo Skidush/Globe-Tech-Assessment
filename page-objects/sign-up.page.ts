@@ -6,6 +6,12 @@ import { FlowError } from "../errors/flow.error";
 import { NewAccountDetails } from "../data/models/new-account.model";
 import { DataUtil } from "../utils/data.utils";
 
+/**
+ * Page object for the signup flow.
+ *
+ * Builds the create account form and handles user registration with generated
+ * credentials and post-submit verification.
+ */
 export class SignupPage extends BaseSpreePage {
   readonly url: string = `${this.baseUrl}/account/register`;
   readonly page: Page;
@@ -27,6 +33,11 @@ export class SignupPage extends BaseSpreePage {
       .build();
   }
 
+  /**
+   * Create a new account and verify that it was registered successfully.
+   *
+   * Passwords are generated dynamically and the email token is transformed before submission.
+   */
   async createAccount(accountDetails: NewAccountDetails): Promise<[NewAccountDetails, AccountDashboardPage]> {
     try {
       accountDetails.password = DataUtil.randomString(10);

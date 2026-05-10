@@ -4,6 +4,9 @@ import { CheckoutPage } from "../page-objects/checkout.page";
 import { FlowError } from "../errors/flow.error";
 import { DataUtil } from "../utils/data.utils";
 
+/**
+ * Encapsulates the cart popup and cart-related actions on product and checkout pages.
+ */
 export class CartComponent {
     readonly page: Page;
     readonly cartContainer: Locator;
@@ -15,6 +18,9 @@ export class CartComponent {
 
     isCurrentlyOpen: boolean = false;
 
+    /**
+     * Read the list of products currently displayed in the cart popup.
+     */
     async getProductList(): Promise<Product[]> {
         const productList = await this.cartContainer.locator('ul').all();
         const products: Product[] = [];
@@ -38,6 +44,9 @@ export class CartComponent {
         return products;
     }
 
+    /**
+     * Click the checkout action within the cart and initialize the checkout page object.
+     */
     async checkout(): Promise<CheckoutPage> {
         await this.cartContainer.locator('a:has-text("Checkout")').click();
 
@@ -54,6 +63,9 @@ export class CartComponent {
         return DataUtil.convertTextDollarValueToFloat(subtotalInDollars);
     }
 
+    /**
+     * Wait until the cart popup becomes visible and mark the component as open.
+     */
     async waitToOpen(): Promise<boolean> {
         try {
             await this.cartContainer.waitFor({ state: 'visible', timeout: 10000 });
