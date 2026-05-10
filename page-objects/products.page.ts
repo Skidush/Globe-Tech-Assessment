@@ -42,6 +42,7 @@ export class ProductsPage extends BaseSpreePage {
                 await this.page.locator('p:has-text("No more products to load")').waitFor({ state: 'visible', timeout: 1000 });
                 allProductsLoaded = true;
             } catch (error) {
+                console.debug(`All products have not yet been loaded. ${error}`);
                 loopCounter++;
             }
 

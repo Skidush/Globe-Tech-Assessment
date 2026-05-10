@@ -13,17 +13,18 @@ test.describe('Checkout E2E Tests', () => {
     // 1. Navigate to the Spree Commerce demo store.
     const myAccountPage: MyAccountPage = await landingPage.navigateToMyAccount();
 
-    let [newAccountDetails, accountDashboardPage]: [NewAccountDetails, AccountDashboardPage] =
+    let accountDashboardPage: AccountDashboardPage;
+    const newAccountDetails: NewAccountDetails =
       // 2. Click on the user icon and Sign Up as a new user from the registration page from the side menu. (Log out if needed)
       await test.step('Register a new user.', async () => {
         const signUpPage: SignupPage = await myAccountPage.navigateToSignUp();
-        const [newAccountDetails, accountDashboardPage] = await signUpPage.createAccount(newAccountData);
+        const [newAccountDetails, newAccountDashboardPage] = await signUpPage.createAccount(newAccountData);
 
         await test.step('Verify that the user has been created', async () => {
-          const nameInSideMenu = await accountDashboardPage.getNameFromSideMenu();
-          const emailInSideMenu = await accountDashboardPage.getEmailFromSideMenu();
+          const nameInSideMenu = await newAccountDashboardPage.getNameFromSideMenu();
+          const emailInSideMenu = await newAccountDashboardPage.getEmailFromSideMenu();
 
-          await expect(page, 'The account dashboard page should be loaded after signing up!').toHaveURL(accountDashboardPage.url);
+          await expect(page, 'The account dashboard page should be loaded after signing up!').toHaveURL(newAccountDashboardPage.url);
 
           await Promise.all([
             expect(nameInSideMenu, 'The first name displayed in the dasboard is incorrect!').toBe(`${newAccountDetails.firstName} ${newAccountDetails.lastName}`),
@@ -31,7 +32,8 @@ test.describe('Checkout E2E Tests', () => {
           ]);
         });
 
-        return [newAccountDetails, accountDashboardPage];
+        accountDashboardPage = newAccountDashboardPage;
+        return newAccountDetails;
       });
 
     // 3. Log in with the newly registered user credentials.
@@ -123,14 +125,14 @@ test.describe('Checkout E2E Tests', () => {
           try {
             await orderPlacedPage.waitToLoad();
           } catch (error) {
-            throw new Error('The Order Placed page was not loaded after checking out!');
+            throw new Error(`The Order Placed page was not loaded after checking out!`, { cause: error });
           }
         });
 
         // 8. Verify the order confirmation page is shown with an order number and success message.
         await test.step('Verify the order receipt details.', async () => {
-          let productsInOrderPlacedPage: Product[] = await orderPlacedPage.getProductList();
-          let productInOrderPlacedPage: Product = productsInOrderPlacedPage[0];
+          const productsInOrderPlacedPage: Product[] = await orderPlacedPage.getProductList();
+          const productInOrderPlacedPage: Product = productsInOrderPlacedPage[0];
 
           const last4DigitsOfCard = paymentDetails.paymentMethod.creditCardDetails.cardNumber.slice(-4);
           const expectedShippingAddress =

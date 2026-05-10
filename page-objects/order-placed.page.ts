@@ -36,11 +36,11 @@ export class OrderPlacedPage {
             let color = await product.locator('p:has-text("Color:")').textContent();
             color = color!.replace('Color: ', '').trim();
 
-            let quantity: any = await product.locator('p:has-text("Qty:")').textContent();
-            quantity = parseInt(quantity!.replace('Qty:', ''));
+            const quantityTextContent: string | null = await product.locator('p:has-text("Qty:")').textContent();
+            const quantity = parseInt(quantityTextContent!.replace('Qty:', ''));
 
-            let price: any = await product.locator('div:has-text("$")').textContent();
-            price = DataUtil.convertTextDollarValueToFloat(price!);
+            const priceTextContent: string | null = await product.locator('div:has-text("$")').textContent();
+            const price = DataUtil.convertTextDollarValueToFloat(priceTextContent!.toString());
 
             products.push({ name, color, quantity, price });
         }
@@ -57,15 +57,15 @@ export class OrderPlacedPage {
     }
 
     async getPaymentVisaEnding(): Promise<string> {
-        let visaEndingIn: any = await (await this.getPaymentContainer()).locator('p:has-text("Visa ending in")').first().textContent();
-        visaEndingIn = visaEndingIn!.toString();
+        const visaEndingInTextContent: string | null = await (await this.getPaymentContainer()).locator('p:has-text("Visa ending in")').first().textContent();
+        const visaEndingIn = visaEndingInTextContent!.toString();
 
         return visaEndingIn.split('in ')[1];
     }
 
     async getPaymentVisaExpiry(): Promise<string> {
-        let expiry: any = await (await this.getPaymentContainer()).locator('p:has-text("Expires")').textContent();
-        expiry = expiry!.toString();
+        const expiryTextContent: string | null = await (await this.getPaymentContainer()).locator('p:has-text("Expires")').textContent();
+        const expiry = expiryTextContent!.toString();
 
         return expiry.split('Expires ')[1];
     }

@@ -26,11 +26,11 @@ export class CartComponent {
             let color = await product.locator('p:has-text("Color:")').textContent();
             color = color!.replace('Color: ', '').trim();
 
-            let quantity: any = await product.locator('button[aria-label="Decrease quantity"] ~ span').textContent();
-            quantity = parseInt(quantity!.toString());
+            const quantityTextContent: string | null = await product.locator('button[aria-label="Decrease quantity"] ~ span').textContent();
+            const quantity: number = parseInt(quantityTextContent!.toString());
 
-            let price: any = await product.locator('span:has-text("$"):not(.line-through)').textContent();
-            price = DataUtil.convertTextDollarValueToFloat(price!.toString());
+            const priceTextContent: string | null = await product.locator('span:has-text("$"):not(.line-through)').textContent();
+            const price = DataUtil.convertTextDollarValueToFloat(priceTextContent!.toString());
 
             products.push({ name, color, quantity, price });
         }
@@ -59,7 +59,7 @@ export class CartComponent {
             await this.cartContainer.waitFor({ state: 'visible', timeout: 10000 });
             this.isCurrentlyOpen = true;
         } catch (error) {
-            throw new FlowError('Cart Component - Wait to Open', 'The cart did not open within the expected time.');
+            throw new FlowError('Cart Component - Wait to Open', `The cart did not open within the expected time. Error: ${error}`);
         }
 
         return this.isCurrentlyOpen;

@@ -68,13 +68,13 @@ export class CheckoutPage {
         }
 
         const methodSelector = method == 'Standard' ? this.shippingMethodStandardSelector : this.shippingMethodPremiumSelector;
-        let methodPrice: any = await this.page.locator(this.shippingSectionSelector)
+        const methodPriceLocator: Locator = await this.page.locator(this.shippingSectionSelector)
             .locator(methodSelector)
             .locator('xpath=ancestor::label[1]')
             .locator('span:has-text("$")');
-        methodPrice = await methodPrice.textContent();
+        const methodPrice = await methodPriceLocator.textContent();
 
-        return DataUtil.convertTextDollarValueToFloat(methodPrice);
+        return DataUtil.convertTextDollarValueToFloat(methodPrice!.toString());
     }
 
     async getProductList(): Promise<Product[]> {
@@ -88,11 +88,11 @@ export class CheckoutPage {
             let color = await product.locator('p:has-text("Color:")').textContent();
             color = color!.replace('Color: ', '').trim();
 
-            let quantity: any = await product.locator('div.rounded-full.flex.items-center').textContent();
-            quantity = parseInt(quantity!.toString());
+            const quantityTextContent: string | null = await product.locator('div.rounded-full.flex.items-center').textContent();
+            const quantity = parseInt(quantityTextContent!.toString());
 
-            let price: any = await product.locator('div:has-text("$")').textContent();
-            price = DataUtil.convertTextDollarValueToFloat(price!.toString());
+            const priceTextContent: string | null = await product.locator('div:has-text("$")').textContent();
+            const price = DataUtil.convertTextDollarValueToFloat(priceTextContent!.toString());
 
             products.push({ name, color, quantity, price });
         }
@@ -144,7 +144,7 @@ export class CheckoutPage {
         await this.paymentMethodForm[paymentVendor].click();
 
         switch(paymentVendor) {
-            case 'stripe':
+            case 'stripe': {
                 const creditCardDetails = details.paymentMethod.creditCardDetails;
                 await this.stripeCardPaymentForm.cardNumber.waitFor({ state: 'visible', timeout: 30000 });
                 await this.stripeCardPaymentForm.cardNumber.fill(creditCardDetails.cardNumber);
@@ -152,6 +152,7 @@ export class CheckoutPage {
                 await this.stripeCardPaymentForm.securityCode.fill(creditCardDetails.cvv);
                 await this.stripeCardPaymentForm.country.selectOption(creditCardDetails.country);
                 break;
+            }
             default:
                 throw new FlowError(`Checkout Page - Fill out checkout form`, `There is no "${paymentVendor}" payment vendor!`);
         }
