@@ -10,7 +10,7 @@ export const test = base.extend<UiFixtures>({
   landingPage: async ({ page }, use) => {
     const landingPage = new LandingPage(page);
 
-    await landingPage.goto(landingPage.url);
+    await landingPage.goto('');
 
     await use(landingPage);
   },
