@@ -20,7 +20,7 @@ export class BaseSpreePage {
   }
 
   async goto(url: string) {
-    await this.page.goto(url);
+    await this.page.goto('');
   }
 
   async goToPage() {

@@ -11,9 +11,9 @@ export default defineConfig({
   timeout: 60000,
 
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: 'https://demo.spreecommerce.org/us/en/',
     trace: 'on-first-retry',
-    headless: false,
+    headless: !!process.env.CI,
   },
 
 
@@ -21,9 +21,8 @@ export default defineConfig({
     {
       name: 'chromium',
       use: {
-        headless: false,
         viewport: null,
-        launchOptions: { args: ['--start-maximized'] },
+        launchOptions: process.env.CI ? {} : { args: ['--start-maximized'] }
       },
     }
   ]
