@@ -30,7 +30,7 @@ export class DataUtil {
     }
 
     static getCartIdFromUrl(url: string): string {
-        const match = url.match(/cart_([^\/]+)/);
+        const match = url.match(/cart_([^/]+)/);
         const cartId = match ? match[1] : null;
 
         if (!cartId) {
@@ -45,7 +45,7 @@ export class DataUtil {
 
     static calculateProductTotals(quantity: number, price: number, taxRatePercent: number = 0, shippingPrice: number = 0): ProductTotals {
         const priceWithoutTax = Number((quantity * price).toFixed(2));
-        let taxRate = 0;
+        let taxRate;
         let taxPrice = 0;
 
         if (taxRatePercent != 0) {
@@ -54,7 +54,7 @@ export class DataUtil {
         }
 
         const priceWithTax = Number((priceWithoutTax + taxPrice).toFixed(2));
-        let total =
+        const total =
             shippingPrice == 0
                 ? +(quantity * price).toFixed(2)
                 : Math.round((priceWithTax + shippingPrice + Number.EPSILON) * 100) / 100;

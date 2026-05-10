@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { BaseSpreePage } from './base-spree.page';
 import { MyAccountPage } from './my-account.page';
 

@@ -1,5 +1,4 @@
 import { Page } from "@playwright/test";
-import { DataUtil } from "../utils/data.utils";
 
 export class ProductBlock {
     readonly page: Page;

@@ -1,5 +1,4 @@
 import { Page, Locator } from "@playwright/test";
-import { PlaywrightElementRole } from "../../types/roles.type";
 
 export class FormBuilder {
     readonly page: Page;
@@ -58,12 +57,10 @@ export class FormBuilder {
 
 
     build(): Record<string, Locator> {
-        let baseLocator;
-
         const form: Record<string, Locator> = {};
         const formLocator = this.page.locator(this.formParentSelector);
 
-        baseLocator = this.iframeSelector != null ? formLocator.frameLocator(this.iframeSelector) : formLocator;
+        const baseLocator = this.iframeSelector != null ? formLocator.frameLocator(this.iframeSelector) : formLocator;
 
         for (const field of this.fields) {
             form[field.name] = baseLocator.locator(field.selector);

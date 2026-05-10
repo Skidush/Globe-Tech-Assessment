@@ -1,5 +1,5 @@
 export class FlowError extends Error {
-  constructor(readonly action: string, message: string, readonly meta?: Record<string, any>, readonly cause?: unknown) {
+  constructor(readonly action: string, message: string) {
     super(`[${action}] ${message}`);
     this.name = 'FlowError';
   }
