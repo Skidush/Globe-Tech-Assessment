@@ -1,0 +1,6 @@
+[
+    {
+        "email": "someexistinguser@example.com",
+        "password": "PasswordThatWillBeRetrievedInKeyVault"
+    }
+]

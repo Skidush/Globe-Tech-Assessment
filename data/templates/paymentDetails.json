@@ -1,0 +1,23 @@
+{
+    "shippingAddress": {
+        "country": "United States",
+        "firstName": "Boji",
+        "lastName": "King",
+        "addressLine1": "123 Main St",
+        "addressLine2": "Apt 4B",
+        "city": "New York",
+        "state": "New York",
+        "stateAbbreviation": "NY",
+        "zipCode": "10282"
+    },
+    "shippingMethod": "Premium",
+    "paymentMethod": {
+        "vendor": "Stripe",
+        "creditCardDetails": {
+            "cardNumber": "4242424242424242",
+            "expiryDate": "12/26",
+            "cvv": "123",
+            "country": "Philippines"
+        }
+    }
+}
