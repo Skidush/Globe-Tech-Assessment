@@ -3,6 +3,11 @@ import { DataUtil } from "../utils/data.utils";
 import { Product } from "../data/models/product.model";
 import { FlowError } from "../errors/flow.error";
 
+/**
+ * Page object for the order confirmation screen after checkout.
+ *
+ * Provides helpers for reading receipt details, payment information, and totals.
+ */
 export class OrderPlacedPage {
     readonly page: Page;
     readonly cartId: string;
@@ -25,6 +30,9 @@ export class OrderPlacedPage {
         return gratitudeMessage;
     }
 
+    /**
+     * Parse the ordered products from the confirmation page into a structured list.
+     */
     async getProductList(): Promise<Product[]> {
         const productList = await this.page.locator('p:has-text("Color:")').locator('xpath=ancestor::li[1]/ancestor::ul[1]').all();
         const products: Product[] = [];
@@ -56,6 +64,9 @@ export class OrderPlacedPage {
         return method;
     }
 
+    /**
+     * Read the last four digits of the Visa card used for payment.
+     */
     async getPaymentVisaEnding(): Promise<string> {
         const visaEndingInTextContent: string | null = await (await this.getPaymentContainer()).locator('p:has-text("Visa ending in")').first().textContent();
         const visaEndingIn = visaEndingInTextContent!.toString();
@@ -63,6 +74,9 @@ export class OrderPlacedPage {
         return visaEndingIn.split('in ')[1];
     }
 
+    /**
+     * Read the Visa card expiry date from the payment details section.
+     */
     async getPaymentVisaExpiry(): Promise<string> {
         const expiryTextContent: string | null = await (await this.getPaymentContainer()).locator('p:has-text("Expires")').textContent();
         const expiry = expiryTextContent!.toString();
@@ -110,6 +124,9 @@ export class OrderPlacedPage {
         return this;
     }
 
+    /**
+     * Extract a labeled amount from the order confirmation totals section.
+     */
     private async getTotalByLabel(label: 'Subtotal' | 'Shipping' | 'Tax' | 'Total'): Promise<number> {
         label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const container = this.page.locator(`xpath=//span[normalize-space(.)="${label}"]/parent::div`);

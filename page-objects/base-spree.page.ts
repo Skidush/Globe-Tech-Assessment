@@ -3,6 +3,12 @@ import { HeaderComponent } from '../component-objects/header.component';
 import { FooterComponent } from '../component-objects/footer.component';
 import { CartComponent } from '../component-objects/cart.component';
 
+/**
+ * Base page object for Spree pages.
+ *
+ * Provides shared navigation helpers and common page components such as header,
+ * footer, and cart access.
+ */
 export class BaseSpreePage {
   readonly page: Page;
   readonly baseUrl: string = 'https://demo.spreecommerce.org/us/en';
@@ -19,10 +25,18 @@ export class BaseSpreePage {
     this.cart = new CartComponent(this.page);
   }
 
+  /**
+   * Navigate the browser to the specified URL.
+   *
+   * @param url The target URL to navigate to.
+   */
   async goto(url: string) {
     await this.page.goto(url);
   }
 
+  /**
+   * Navigate to the current page object's configured URL.
+   */
   async goToPage() {
     await this.goto(this.url);
   }
@@ -35,6 +49,10 @@ export class BaseSpreePage {
     return this.page.url();
   }
 
+  /**
+   * Wait for the page to finish loading and for the browser URL to reflect the
+   * expected page object's URL.
+   */
   async waitForPageLoad() {
     await this.page.waitForLoadState('networkidle');
     await this.page.waitForURL(this.url);

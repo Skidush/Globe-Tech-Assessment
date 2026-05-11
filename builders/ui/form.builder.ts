@@ -1,5 +1,10 @@
 import { Page, Locator } from "@playwright/test";
 
+/**
+ * Helper to build strongly typed locators for a form section.
+ *
+ * This builder supports normal page forms and forms rendered inside an iframe.
+ */
 export class FormBuilder {
     readonly page: Page;
     readonly formParentSelector: string;
@@ -56,6 +61,10 @@ export class FormBuilder {
     }
 
 
+    /**
+     * Build a dictionary of locators for the configured form fields, buttons,
+     * and links, optionally scoped within an iframe.
+     */
     build(): Record<string, Locator> {
         const form: Record<string, Locator> = {};
         const formLocator = this.page.locator(this.formParentSelector);

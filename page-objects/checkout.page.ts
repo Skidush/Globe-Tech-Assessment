@@ -6,6 +6,11 @@ import { PaymentDetails } from "../data/models/payment-details.model";
 import { FlowError } from "../errors/flow.error";
 import { OrderPlacedPage } from "./order-placed.page";
 
+/**
+ * Page object for the checkout flow.
+ *
+ * Handles checkout form interaction, shipping/payment selection, and totals parsing.
+ */
 export class CheckoutPage {
     readonly page: Page;
     readonly contactAndShippingForm: Record<string, Locator>;
@@ -62,6 +67,11 @@ export class CheckoutPage {
             .build();
     }
 
+    /**
+     * Read the currently selected shipping method price for the checkout page.
+     *
+     * @param method Either "Standard" or "Premium".
+     */
     async getShippingMethodPrice(method: string) {
         if (method != 'Standard' && method != 'Premium') {
             throw new TypeError('The method passed was neither Standard nor Premium!');
@@ -77,6 +87,9 @@ export class CheckoutPage {
         return DataUtil.convertTextDollarValueToFloat(methodPrice!.toString());
     }
 
+    /**
+     * Parse the checkout product list and return structured product details.
+     */
     async getProductList(): Promise<Product[]> {
         const productList = await this.page.locator('p:has-text("Color:")').locator('xpath=ancestor::div[.//img][1]').all();
         const products: Product[] = [];
@@ -122,6 +135,9 @@ export class CheckoutPage {
         return DataUtil.convertTextDollarValueToFloat(total);
     }
 
+    /**
+     * Fill the checkout shipping and payment form using the provided payment details.
+     */
     async fillOutCheckoutForm(details: PaymentDetails) {
         const shippingDetails = details.shippingAddress;
         await this.contactAndShippingForm.country.selectOption(shippingDetails.country);
@@ -158,6 +174,9 @@ export class CheckoutPage {
         }
     }
 
+    /**
+     * Submit the checkout payment and return the order confirmation page object.
+     */
     async placeOrder(): Promise<OrderPlacedPage> {
         const cartId = DataUtil.getCartIdFromUrl(this.page.url());
         await this.page.locator('button:has-text("Pay Now")').click();
@@ -165,12 +184,20 @@ export class CheckoutPage {
         return new OrderPlacedPage(this.page, cartId);
     }
 
+    /**
+     * Wait for the checkout page UI to be loaded and ready for interaction.
+     */
     async waitToLoad(): Promise<CheckoutPage> {
         await this.page.waitForURL(/checkout/);
         await this.contactAndShippingForm.country.waitFor({ state: "visible" });
         return this;
     }
 
+    /**
+     * Extract a labeled amount from the totals section and convert it to a numeric value.
+     *
+     * @param label The total label to read: Subtotal, Shipping, Tax, or Total.
+     */
     private async getTotalByLabel(label: 'Subtotal' | 'Shipping' | 'Tax' | 'Total'): Promise<number> {
         label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const container = this.page.locator(`xpath=//span[normalize-space(.)="${label}"]/parent::div`);
